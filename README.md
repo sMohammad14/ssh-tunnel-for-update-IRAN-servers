@@ -145,3 +145,60 @@ vpn-off
 
 vpn-status
 ```
+
+
+## با کد زیر که توی سرور ایران باید اچرا بشه میتونید تمام تنظیمات رو به حالت قبل برگردونید، روی هر دو سرور، دقت کنید این کد فقط توی سرور ایران اجرا کنید:
+
+کد زیر رو یک جا کپی کنید و توی سرور ایران پیست کنید
+```
+cat > /root/cleanup-all.sh << 'EOF'
+#!/bin/bash
+echo "Cleanup Both Servers..."
+
+# Informatoin Server KHAREJ
+read -p "IP Server KHAREJ: " FOREIGN_IP
+read -p "SSH Port (Default is 22): " SSH_PORT
+SSH_PORT=${SSH_PORT:-22}
+
+# 1.IRAN Cleaning Server
+echo "Cleaning IRAN Server..."
+pkill -f sshuttle 2>/dev/null
+rm -f /usr/local/bin/vpn-* 2>/dev/null
+ip link del tun0 2>/dev/null
+
+# 2. KHAREJ Cleaning Server
+echo "Cleaning KHAREJ Server..."
+ssh -p $SSH_PORT root@$FOREIGN_IP "bash -s" << 'REMOTE_SCRIPT'
+sed -i '/PermitRootLogin yes\|PermitTunnel yes/d' /etc/ssh/sshd_config
+echo "PermitRootLogin prohibit-password" >> /etc/ssh/sshd_config
+echo "0" > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -F 2>/dev/null
+systemctl restart sshd 2>/dev/null
+echo "Server KHAREJ Finished"
+REMOTE_SCRIPT
+
+# 3.Delete SSH Key
+read -p "Local Keys Will Be Delete (y/N): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -rf ~/.ssh/
+    echo "SSH Keys Deleted"
+fi
+
+echo ""
+echo "Cleaning.."
+echo "Done."
+EOF
+```
+
+سپس کد زیر رو بزنید:
+
+```
+chmod +x /root/cleanup-all.sh
+```
+
+و در نهایت:
+
+```
+cleanup-all.sh
+```
