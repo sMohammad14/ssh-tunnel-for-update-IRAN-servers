@@ -68,6 +68,14 @@ curl ifconfig.me
 sudo -i
 
 ```
+
+```
+
+apt install sshuttle
+
+```
+
+
 ```
 
 ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa
@@ -127,8 +135,27 @@ else
 fi
 EOF
 ```
-اینجا کار تموم شد حالا توی سرور ایران میتونید با کامندهای زیر، این ارتباط رو کنترل کنید:
 
+
+بعد هم دسترسی اجرا این فایلها:
+```
+
+chmod +x /usr/local/bin/vpn-on
+
+```
+
+```
+
+chmod +x /usr/local/bin/vpn-off
+
+```
+
+```
+
+chmod +x /usr/local/bin/vpn-status
+
+```
+اینجا کار تموم شد حالا توی سرور ایران میتونید با کامندهای زیر، این ارتباط رو کنترل کنید:
 
 ### 1. روشن کردن VPN
 ```
